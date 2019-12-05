@@ -1,0 +1,56 @@
+在提供者和服务者的项目中 添加
+<!--        追踪服务 服务间得调用情况 然后将信息发送到rabbit -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-stream</artifactId>
+        </dependency>
+<!--        整合rabbit-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+            <version>1.2.1.RELEASE</version>
+        </dependency>
+<!--        end-->
+配置文件中：
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:root@localhost:7776/eureka
+  instance:
+    #    表示client发送心跳给server端的频率
+    lease-renewal-interval-in-seconds: 2
+    #    表示server至上次收到client的心跳之后，等待下一次心跳的超时时间，超时则移除
+    lease-expiration-duration-in-seconds: 2
+
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+spring:
+  application:
+    name: dm-user-consumer
+
+#    zipkin 得地址 通过zipkin服务 显示图形界面
+#  zipkin:
+#    base-url: http://localhost:7700
+#    所有得请求信息都会收集 采样率
+#  sleuth:
+#    sampler:
+#      percentage: 1.0
+
+#  rabbit 得地址 将日志信息都发送到rabbit中
+  rabbitmq:
+    host: 192.168.174.130
+    port: 5672
+    username: guest
+    password: guest
+
+
+
+server:
+  port: 8086
+#feign 整合了服务熔断
+feign:
+  hystrix:
+    enabled: true
+
+#日志级别
+logging:
+  level: info
